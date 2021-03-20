@@ -9,18 +9,18 @@ import subprocess
 from typing import List, Tuple
 
 
-def build_docker_run_command(options: List[str], files: List[str], max_memory: int = None) -> Tuple[List[str], str]:
+def build_docker_run_command(opts: List[str], files: List[str], max_memory: int = None) -> Tuple[List[str], str]:
     cmd = ["docker", "run"]
     if max_memory:
         cmd.extend(['-m', f"{max_memory}M", '--memory-swap', f"{max_memory}M"])
     name = str(uuid.uuid4())
     cmd.extend(['--name', name])
-    
+
     cmd.extend(['-v', str(Path.cwd()) + ':/code'])
     cmd.extend(['-w', '/harmony'])
     cmd.extend(['-t', 'harmony'])
     files_in_container = ['/'.join(('..', 'code', f)) for f in files]
-    cmd.extend(['./harmony'] + options + files_in_container)
+    cmd.extend(['./harmony'] + opts + files_in_container)
     return cmd, name
 
 
