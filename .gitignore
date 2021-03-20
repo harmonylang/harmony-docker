@@ -3,3 +3,5 @@ harmony-master/
 harmony.html
 charm.json
 **/*.hny
+
+env/
