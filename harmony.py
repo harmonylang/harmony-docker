@@ -18,9 +18,9 @@ def build_docker_run_command(opts: List[str], files: List[str], max_memory: int 
 
     cmd.extend(['-v', str(Path.cwd()) + ':/code'])
     cmd.extend(['-w', '/harmony'])
-    cmd.extend(['-t', 'harmony'])
+    cmd.extend(['-t', 'harmony-docker'])
     files_in_container = ['/'.join(('..', 'code', f)) for f in files]
-    cmd.extend(['./harmony'] + opts + files_in_container)
+    cmd.extend(['./wrapper.sh'] + opts + files_in_container)
     return cmd, name
 
 
