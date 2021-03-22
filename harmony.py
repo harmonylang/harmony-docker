@@ -43,10 +43,10 @@ def main(opts, args):
     clean_cmd = build_docker_clean_command(name)
 
     if subprocess.run(run_cmd).returncode == 0:
-        subprocess.run(get_json_cmd)
-        subprocess.run(get_html_cmd)
+        subprocess.run(get_json_cmd, capture_output=True)
+        subprocess.run(get_html_cmd, capture_output=True)
 
-    subprocess.run(clean_cmd)
+    subprocess.run(clean_cmd, capture_output=True)
 
 
 if __name__ == '__main__':
