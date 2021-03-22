@@ -22,7 +22,7 @@ def build_docker_run_command(
 
     cmd.extend(['-v', str(Path.cwd()) + ':/code'])
     cmd.extend(['-w', '/harmony'])
-    cmd.extend(['-t', 'harmony-docker'])
+    cmd.extend(['-t', 'anthonyyang/harmony-docker'])
     files_in_container = ['/'.join(('..', 'code', f)) for f in filenames]
     cmd.extend(['./wrapper.sh'] + opts + files_in_container)
     return cmd, name

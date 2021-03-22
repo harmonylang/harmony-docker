@@ -1,4 +1,4 @@
 #!/bin/bash
 
 sh ./update-harmony.sh
-docker build -t harmony-docker .
+docker build -t anthonyyang/harmony-docker .
