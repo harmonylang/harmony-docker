@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 This is a wrapper command for a Harmony image run by Docker
 """
