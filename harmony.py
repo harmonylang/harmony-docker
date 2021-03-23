@@ -2,6 +2,7 @@
 This is a wrapper command for a Harmony image run by Docker
 """
 import argparse
+import os
 import sys
 import uuid
 from pathlib import Path
@@ -23,7 +24,7 @@ def build_docker_run_command(
     cmd.extend(['-v', str(Path.cwd()) + ':/code'])
     cmd.extend(['-w', '/harmony'])
     cmd.extend(['-t', 'anthonyyang/harmony-docker'])
-    files_in_container = ['/'.join(('..', 'code', f)) for f in filenames]
+    files_in_container = ['/'.join(['..', 'code'] + os.path.normpath(f).split(os.sep)) for f in filenames]
     cmd.extend(['./wrapper.sh'] + opts + files_in_container)
     return cmd, name
 
