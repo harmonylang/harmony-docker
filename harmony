@@ -16,7 +16,7 @@ function harmony_function() {
         FILES_IN_CONTAINER=()
         for f in "$@"; do
             FULL_PATH=$(join_by "/" ".." "code" "$f")
-            FILES_IN_CONTAINER+=("\"$FULL_PATH\"")
+            FILES_IN_CONTAINER+=("'$FULL_PATH'")
         done
         echo "${FILES_IN_CONTAINER[@]}"
     }
@@ -67,7 +67,8 @@ function harmony_function() {
 
     function main() {
         MAX_MEMORY="$1"
-        shift;
+        MAX_TIMEOUT="$2"
+        shift; shift;
         name=$(make_uuid)
         run_cmd=$(make_run_cmd "$MAX_MEMORY" "$name" "$@")
         get_json_cmd=$(make_get_json_cmd "$name")
@@ -75,12 +76,30 @@ function harmony_function() {
         kill_cmd=$(make_kill_cmd "$name")
         clean_cmd=$(make_clean_cmd "$name")
 
-        if eval "$run_cmd"; then
-            eval "$get_json_cmd"
-            eval "$get_html_cmd"
+        function timeout() {
+            time=$1
+            # start the command in a subshell to avoid problem with pipes
+            # (spawn accepts one command)
+            command="/bin/sh -c \"$2\""
+            expect -c "set echo \"-noecho\"; set timeout $time; spawn -noecho $command; expect timeout { exit 1 } eof { exit 0 }"
+            if [ $? = 1 ] ; then
+                echo "Timeout after ${time} seconds"
+            fi
+        }
+        if [ -n "$MAX_TIMEOUT" ]; then
+            if timeout "$MAX_TIMEOUT" "$run_cmd"; then
+                eval "$get_json_cmd" &>/dev/null
+                eval "$get_html_cmd" &>/dev/null
+            else
+                eval "$kill_cmd" &>/dev/null
+            fi
         else
-            echo "Killed"
-            eval "$kill_cmd" &>/dev/null
+            if eval "$run_cmd"; then
+                eval "$get_json_cmd"&>/dev/null
+                eval "$get_html_cmd"&>/dev/null
+            else
+                eval "$kill_cmd" &>/dev/null
+            fi
         fi
         eval "$clean_cmd" &>/dev/null
     }
@@ -93,6 +112,11 @@ function harmony_function() {
             case $key in
                 --memory)
                 MAX_MEMORY="$2"
+                shift # past argument
+                shift # past value
+                ;;
+                --timeout)
+                MAX_TIMEOUT="$2"
                 shift # past argument
                 shift # past value
                 ;;
@@ -113,7 +137,7 @@ function harmony_function() {
         done
         FULL_FILE_PATHS=$(make_path_to_files "${FILENAMES[@]}")
         POSITIONALS="${OPTIONS[*]} ${FULL_FILE_PATHS[*]}"
-        main "$MAX_MEMORY" "${POSITIONALS[@]}"
+        main "$MAX_MEMORY" "$MAX_TIMEOUT" "${POSITIONALS[@]}"
     }
     setup "$@"
 }
