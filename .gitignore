@@ -1,7 +1,7 @@
-harmony-master/
+#harmony-master/
 
 harmony.html
 charm.json
-**/*.hny
+/*.hny
 
 env/
