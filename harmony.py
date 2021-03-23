@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """
 This is a wrapper command for a Harmony image run by Docker
 """
