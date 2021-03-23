@@ -7,9 +7,15 @@ function harmony_function() {
         echo "$*";
     }
 
-    function make_uuid() {
-        uuid=$(uuidgen)
-        echo "$uuid"
+    function make_id() {
+        ID=()
+        LETTERS=(1 2 3 4 5 6 7 8 9 0 a b c d e f g)
+        for _ in $(seq 1 32); do
+            INDEX=$((RANDOM % 16))
+            ID+=("${LETTERS[INDEX]}")
+        done
+        idNumber=$(join_by '' "${ID[@]}")
+        echo "$idNumber"
     }
 
     function make_path_to_files() {
@@ -69,7 +75,7 @@ function harmony_function() {
         MAX_MEMORY="$1"
         MAX_TIMEOUT="$2"
         shift; shift;
-        name=$(make_uuid)
+        name=$(make_id)
         run_cmd=$(make_run_cmd "$MAX_MEMORY" "$name" "$@")
         get_json_cmd=$(make_get_json_cmd "$name")
         get_html_cmd=$(make_get_html_cmd "$name")
@@ -87,20 +93,13 @@ function harmony_function() {
             fi
         }
         if [ -n "$MAX_TIMEOUT" ]; then
-            if timeout "$MAX_TIMEOUT" "$run_cmd"; then
-                eval "$get_json_cmd" &>/dev/null
-                eval "$get_html_cmd" &>/dev/null
-            else
-                eval "$kill_cmd" &>/dev/null
-            fi
+            timeout "$MAX_TIMEOUT" "$run_cmd"
         else
-            if eval "$run_cmd"; then
-                eval "$get_json_cmd"&>/dev/null
-                eval "$get_html_cmd"&>/dev/null
-            else
-                eval "$kill_cmd" &>/dev/null
-            fi
+            eval "$run_cmd"
         fi
+        eval "$get_json_cmd"&>/dev/null
+        eval "$get_html_cmd"&>/dev/null
+        eval "$kill_cmd" &>/dev/null
         eval "$clean_cmd" &>/dev/null
     }
 
