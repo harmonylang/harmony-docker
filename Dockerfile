@@ -7,9 +7,9 @@ RUN apk update && \
     apk add gcc && \
     apk add musl-dev
 
-RUN echo "assert True" > example.hny
-RUN (cd /harmony && ./harmony ../example.hny && chmod +x wrapper.sh)
-RUN rm example.hny
+RUN (cd /harmony && python3 install.py && chmod +x wrapper.sh)
+RUN (cd /harmony && ./wrapper.sh code/Diners.hny)
+RUN (cd /harmony && rm -rf code archive.xml charm.c code python install.py)
 
 FROM alpine:latest
 RUN apk update && \
