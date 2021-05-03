@@ -9,8 +9,18 @@ rm -rf "$tmp_dir/.git"
 rm -rf harmony-master
 mkdir harmony-master
 
-mv "$tmp_dir/harmony" ./harmony-master
-mv "$tmp_dir/modules" ./harmony-master
+HARMONY_MASTER="$(pwd)/harmony-master"
+
+function install_harmony() {
+    cd "$1" || return
+    python3 install.py
+    mv modules "$2"
+    mv harmony.py "$2"
+    mv harmony "$2"
+    mv charm.exe "$2"
+}
+
+(install_harmony "$tmp_dir" "$HARMONY_MASTER")
 
 rm -rf "$tmp_dir"
 cp wrapper.sh harmony-master/wrapper.sh
