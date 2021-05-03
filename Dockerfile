@@ -9,7 +9,7 @@ RUN apk update && \
 
 RUN (cd /harmony && python3 install.py && chmod +x wrapper.sh)
 RUN (cd /harmony && ./wrapper.sh code/Diners.hny)
-RUN (cd /harmony && rm -rf code archive.xml charm.c code python install.py)
+RUN (cd /harmony && rm -rf code archive.xml charm.c code python install.py harmony.bat charm.Windows.exe README.txt)
 
 FROM alpine:latest
 RUN apk update && \
